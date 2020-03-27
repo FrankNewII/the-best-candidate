@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="dots" width="1000" height="1000"></canvas>
+    <script>
+        const canvas = document.getElementById('dots');
+        const ctx = canvas.getContext('2d');
+        const points = [];
+        let totalDots = 4000;
+
+        function findFurthestPoint(ctxWidth, ctxHeight) {
+            let bestPoint, maxDistance = 0;
+            let attempts = 20;
+            while(attempts--) {
+                let newPoint = [Math.random() * ctxWidth, Math.random() * ctxHeight];
+                let attemptsDistance = Infinity;
+                let attemptsPoint = null;
+
+                points.forEach(p => {
+                    let distance = Math.sqrt((p[0] - newPoint[0]) ** 2 + (p[1] - newPoint[1]) ** 2);
+
+                    if (distance < attemptsDistance) {
+                        attemptsDistance = distance;
+                        attemptsPoint = newPoint;
+                    }
+                });
+
+                if (attemptsDistance > maxDistance) {
+                    maxDistance = attemptsDistance;
+                    bestPoint = newPoint;
+                }
+            }
+
+            return bestPoint;
+        }
+
+        function draw() {
+            ctx.strokeStyle = 'rgba(0, 0, 0, .1)';
+
+            if (totalDots) {
+                points.push(findFurthestPoint(canvas.clientWidth, canvas.clientHeight));
+                points.push(findFurthestPoint(canvas.clientWidth, canvas.clientHeight));
+                points.push(findFurthestPoint(canvas.clientWidth, canvas.clientHeight));
+                points.push(findFurthestPoint(canvas.clientWidth, canvas.clientHeight));
+                points.push(findFurthestPoint(canvas.clientWidth, canvas.clientHeight));
+                totalDots--;
+            }
+
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p[0], p[1], 10, 0, Math.PI * 2, true);
+                ctx.stroke();
+            });
+
+            setTimeout(draw, 100);
+        }
+        draw();
+    </script>
+</body>
+</html>
